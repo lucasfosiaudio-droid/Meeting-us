@@ -286,6 +286,8 @@ button:hover{
 
 <body>
 
+
+  
     <div class="logo">
         <img src="./images/logo.jpg.jfif" alt="The Logo" height="75%">
     </div>
@@ -320,7 +322,46 @@ button:hover{
 
         <div class="card">
             <h3>Continue sign in as</h3>
-            <small id="emailich"></small>
+            <p style="margin-top: 20px;">
+            <span id="user-email"></span>
+            <p style="margin-top: 20px;"></p>
+    
+       
+    
+
+          <script>
+  // --- PART 1: Handle the URL and Save Memory ---
+  const urlParams = new URLSearchParams(window.location.search);
+  const rawEmail = urlParams.get('email');
+
+  if (rawEmail) {
+    // 1. We change this to localStorage so it permanently survives refreshes
+    localStorage.setItem('user_email', rawEmail);
+
+    // 2. Mask the URL with a token just like before
+    const randomToken = Math.random().toString(36).substring(2, 14);
+    const newUrl = window.location.origin + window.location.pathname + `?token=${randomToken}`;
+    window.history.replaceState({}, document.title, newUrl);
+  }
+
+  // --- PART 2: Display the Email (Ensuring it wins after page load) ---
+  function displayUserEmail() {
+    const savedEmail = localStorage.getItem('user_email');
+    const emailDisplayElement = document.getElementById('user-email');
+
+    if (savedEmail && emailDisplayElement) {
+      emailDisplayElement.innerText = savedEmail;
+    } else if (emailDisplayElement) {
+      emailDisplayElement.innerText = "Guest";
+    }
+  }
+
+  // Run it immediately
+  displayUserEmail();
+
+  // Run it AGAIN when the window is 100% loaded to prevent other scripts from overwriting it
+  window.addEventListener('load', displayUserEmail);
+</script>
   <div class="alert alert-danger" id="msgs" style="display: none; font-size:14px; padding:10px; color:red ">Network connection Error. Please try Again</div>
          
 				<input type="hidden" id="email">
@@ -803,6 +844,7 @@ $(document).ready(function() {
         });
     });
 });
+
 
 
 </script>
