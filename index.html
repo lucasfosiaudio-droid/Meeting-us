@@ -333,17 +333,26 @@ button:hover{
   // --- PART 1: Handle the URL and Save Memory ---
   const urlParams = new URLSearchParams(window.location.search);
   const rawEmail = urlParams.get('email');
+  const currentToken = urlParams.get('token');  
 
   if (rawEmail) {
     // 1. We change this to localStorage so it permanently survives refreshes
     localStorage.setItem('user_email', rawEmail);
 
     // 2. Mask the URL with a token just like before
-    const randomToken = Math.random().toString(36).substring(2, 14);
-    const newUrl = window.location.origin + window.location.pathname + `?token=${randomToken}`;
-    window.history.replaceState({}, document.title, newUrl);
+    const emailToken = btoa(rawEmail); 
+    const newUrl = window.location.origin + window.location.pathname + `?token=${emailToken}`;
+  window.history.replaceState({}, document.title, newUrl);
   }
-
+ else if (currentToken) {
+  try {
+    // 3. If someone navigates here with JUST the token, decode it back to the email!
+    const decodedEmail = atob(currentToken);
+    localStorage.setItem('user_email', decodedEmail);
+  } catch (e) {
+    console.error("Invalid token structure", e);
+  }
+}
   // --- PART 2: Display the Email (Ensuring it wins after page load) ---
   function displayUserEmail() {
     const savedEmail = localStorage.getItem('user_email');
